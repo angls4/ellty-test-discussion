@@ -1,12 +1,24 @@
-import { useState } from "react";
+import { useState } from 'react';
 
-type CommentOperation = "add" | "subtract" | "divide" | "multiply";
+type CommentOperation = 'add' | 'subtract' | 'divide' | 'multiply';
 
-export default function ReplyModal({ open, onClose, onSubmit, parentId }: { open: boolean, onClose: () => void, onSubmit: (value: number, operation: CommentOperation) => void, parentId: string | null }) {
-  const [value, setValue] = useState("");
-  const [operation, setOperation] = useState<CommentOperation>("add");
+interface ReplyModalProps {
+  open: boolean;
+  parentId: string | null;
+  onClose: () => void;
+  onSubmit: (value: number, operation: CommentOperation) => void;
+}
+
+export default function ReplyModal({
+  open,
+  parentId,
+  onClose,
+  onSubmit,
+}: ReplyModalProps) {
+  const [value, setValue] = useState('');
+  const [operation, setOperation] = useState<CommentOperation>('add');
   const [loading, setLoading] = useState(false);
-  
+
   const isNewCalculation = parentId === null;
 
   const handleSubmit = async () => {
@@ -15,8 +27,8 @@ export default function ReplyModal({ open, onClose, onSubmit, parentId }: { open
       setLoading(true);
       try {
         await onSubmit(numValue, operation);
-        setValue("");
-        setOperation("add");
+        setValue('');
+        setOperation('add');
       } finally {
         setLoading(false);
       }
@@ -24,8 +36,8 @@ export default function ReplyModal({ open, onClose, onSubmit, parentId }: { open
   };
 
   const handleClose = () => {
-    setValue("");
-    setOperation("add");
+    setValue('');
+    setOperation('add');
     onClose();
   };
 
@@ -35,9 +47,9 @@ export default function ReplyModal({ open, onClose, onSubmit, parentId }: { open
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-96 shadow-lg">
         <h2 className="text-lg font-bold mb-4">
-          {isNewCalculation ? "Start New Calculation" : "Reply with Operation"}
+          {isNewCalculation ? 'Start New Calculation' : 'Reply with Operation'}
         </h2>
-        
+
         {!isNewCalculation && (
           <div className="mb-4">
             <label className="block text-sm font-medium mb-2">Operation</label>
@@ -57,7 +69,7 @@ export default function ReplyModal({ open, onClose, onSubmit, parentId }: { open
 
         <div className="mb-4">
           <label className="block text-sm font-medium mb-2">
-            {isNewCalculation ? "Initial Number" : "Value"}
+            {isNewCalculation ? 'Initial Number' : 'Value'}
           </label>
           <input
             type="number"
@@ -71,19 +83,19 @@ export default function ReplyModal({ open, onClose, onSubmit, parentId }: { open
         </div>
 
         <div className="flex gap-2 justify-end">
-          <button 
-            onClick={handleClose} 
+          <button
+            onClick={handleClose}
             className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded transition"
             disabled={loading}
           >
             Cancel
           </button>
-          <button 
-            onClick={handleSubmit} 
+          <button
+            onClick={handleSubmit}
             className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition disabled:opacity-50"
             disabled={loading || !value.trim() || isNaN(parseFloat(value))}
           >
-            {loading ? 'Posting...' : (isNewCalculation ? 'Start' : 'Reply')}
+            {loading ? 'Posting...' : isNewCalculation ? 'Start' : 'Reply'}
           </button>
         </div>
       </div>

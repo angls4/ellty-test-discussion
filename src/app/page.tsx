@@ -10,7 +10,7 @@ import { useComments } from '@/app/hooks/useComments';
 
 export default function Page() {
   const { user, setUser, logout } = useAuth();
-  const { comments, fetchComments, addComment } = useComments();
+  const { comments, loading, fetchComments, addComment } = useComments();
   const threadListRef = useRef<ThreadListHandle>(null);
   const [replyModal, setReplyModal] = useState<{ open: boolean; parentId: string | null }>({
     open: false,
@@ -72,6 +72,9 @@ export default function Page() {
         onLogin={() => setAuthModal({ open: true, mode: 'login' })}
       />
       <ThreadList ref={threadListRef} comments={comments} onReply={handleReply} />
+      {loading && (
+        <div className="text-center text-gray-500 py-4">Loading comments...</div>
+      )}
       <ReplyModal
         open={replyModal.open}
         parentId={replyModal.parentId}

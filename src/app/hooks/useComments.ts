@@ -11,15 +11,12 @@ export const useComments = () => {
   const fetchComments = useCallback(async () => {
     try {
       const res = await fetch('/api/comments', { credentials: 'include' });
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || 'Failed to fetch comments');
-      }
+      if (!res.ok) throw new Error('Failed to fetch comments');
       const commentsArray = await res.json();
       const commentsMap = new Map(commentsArray.map((comment: Comment) => [comment._id, comment]));
-      setComments(commentsMap as any);
-    } catch (err: any) {
-      alert(err.message || 'Failed to fetch comments');
+      setComments(commentsMap);
+    } catch (err) {
+      console.error('Failed to fetch comments:', err);
     }
   }, []);
 
@@ -36,14 +33,11 @@ export const useComments = () => {
         body: JSON.stringify({ value, operation, parentId }),
       });
 
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || 'Failed to post comment');
-      }
+      if (!res.ok) throw new Error('Failed to post comment');
       await fetchComments();
       return true;
-    } catch (err: any) {
-      alert(err.message || 'Failed to post comment');
+    } catch (err) {
+      console.error('Failed to post comment:', err);
       return false;
     }
   };

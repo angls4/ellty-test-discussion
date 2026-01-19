@@ -43,26 +43,3 @@ export async function GET(req: NextRequest) {
         );
     }
 }
-
-export async function DELETE(req: NextRequest) {
-  const authResult = await authenticate(req);
-  if (authResult.error) {
-    return NextResponse.json(
-      { error: authResult.error },
-      { status: authResult.status }
-    );
-  }
-
-  try {
-    const url = new URL(req.url);
-    const id = url.searchParams.get("id");
-    await commentService.deleteComment(id!, authResult.user!._id.toHexString());
-    return NextResponse.json({ message: "Comment deleted successfully" });
-  } catch (error: any) {
-    const statusCode = error instanceof AppError ? error.statusCode : 500;
-    return NextResponse.json(
-      { error: error.message },
-      { status: statusCode }
-    );
-  }
-}

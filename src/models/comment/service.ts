@@ -80,49 +80,10 @@ export class CommentService {
         return commentRepository.insertComment(comment);
     }
 
-    async getComments(rootId?: string | null): Promise<Comment[]> {
-        if (rootId) {
-            const rootComment = await commentRepository.getCommentById(rootId);
-            if (!rootComment) {
-                throw new AppError(ErrorCodes.COMMENT_NOT_FOUND.message, ErrorCodes.COMMENT_NOT_FOUND.code);
-            }
-            const path = rootComment.path
-                ? `${rootComment.path}/${rootComment._id.toHexString()}`
-                : rootComment._id.toHexString();
-
-            console.log("Fetching comments for path:", path);
-            const comments = await commentRepository.getCommentsByPath(path);
-            return comments;
-        }
-
+    async getComments(): Promise<Comment[]> {
         return commentRepository.getAllComments();
     }
 
-    async getCommentById(id: string): Promise<Comment | null> {
-        return commentRepository.getCommentById(id);
-    }
-
-    async deleteComment(id: string, deleterId: string): Promise<boolean> {
-        if (!id) {
-            throw new AppError(ErrorCodes.COMMENT_ID_REQUIRED.message, ErrorCodes.COMMENT_ID_REQUIRED.code);
-        }
-
-        const comment = await commentRepository.getCommentById(id);
-        if (!comment) {
-            throw new AppError(ErrorCodes.COMMENT_NOT_FOUND.message, ErrorCodes.COMMENT_NOT_FOUND.code);
-        }
-
-        if (comment.authorId.toHexString() !== deleterId) {
-            throw new AppError(ErrorCodes.UNAUTHORIZED.message, ErrorCodes.UNAUTHORIZED.code);
-        }
-        
-        const success = await commentRepository.deleteComment(id);
-        if (!success) {
-            throw new AppError(ErrorCodes.INTERNAL_SERVER_ERROR.message, ErrorCodes.INTERNAL_SERVER_ERROR.code);
-        }
-        
-        return success;
-    }
 }
 
 export const commentService = new CommentService();

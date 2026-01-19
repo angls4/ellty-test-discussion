@@ -159,7 +159,11 @@ export default function Page() {
       
       if (res.ok) {
         setReplyModal({ open: false, parentId: null });
-        fetchComments();
+        await fetchComments();
+        // Expand parent comment to show new reply
+        if (replyModal.parentId) {
+          setTimeout(() => handleExpand(replyModal.parentId!, true), 100);
+        }
       } else {
         alert('Failed to post reply');
       }
@@ -205,7 +209,7 @@ export default function Page() {
         );
       })}
 
-      <ReplyModal open={replyModal.open} onClose={() => setReplyModal({ open: false, parentId: null })} onSubmit={handleReplySubmit} />
+      <ReplyModal open={replyModal.open} parentId={replyModal.parentId} onClose={() => setReplyModal({ open: false, parentId: null })} onSubmit={handleReplySubmit} />
       <AuthModal open={authModal.open} mode={authModal.mode} onClose={() => setAuthModal({ open: false, mode: 'login' })} onSuccess={handleAuthSuccess} onSwitchMode={(mode) => setAuthModal({ open: true, mode })} />
     </div>
   )

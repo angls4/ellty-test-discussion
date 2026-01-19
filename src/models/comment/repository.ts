@@ -72,7 +72,7 @@ export class CommentRepository {
                     }
                 },
                 {
-                    $sort: { path: 1, createdAt: -1 },
+                    $sort: { fullPath: 1, createdAt: -1 },
                 },
             ])
             .toArray() as unknown as Comment[];

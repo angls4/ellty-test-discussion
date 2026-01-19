@@ -7,10 +7,8 @@ interface Comment {
 
 export const useComments = () => {
   const [comments, setComments] = useState<Map<string, Comment>>(new Map());
-  const [loading, setLoading] = useState(false);
 
   const fetchComments = useCallback(async () => {
-    setLoading(true);
     try {
       const res = await fetch('/api/comments', { credentials: 'include' });
       if (!res.ok) {
@@ -22,8 +20,6 @@ export const useComments = () => {
       setComments(commentsMap as any);
     } catch (err: any) {
       alert(err.message || 'Failed to fetch comments');
-    } finally {
-      setLoading(false);
     }
   }, []);
 
@@ -52,5 +48,5 @@ export const useComments = () => {
     }
   };
 
-  return { comments, setComments, loading, fetchComments, addComment };
+  return { comments, setComments, fetchComments, addComment };
 };

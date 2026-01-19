@@ -1,6 +1,18 @@
 version: '3.8'
 
-services:
+  mongodb:
+    image: mongo:latest
+    container_name: ellty_mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:-admin}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-password}
+      MONGO_INITDB_DATABASE: ${MONGO_DB:-ellty}
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - ellty_network
+    restart: always
+
   app:
     build:
       context: .
@@ -11,7 +23,12 @@ services:
     environment:
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3001}
       MONGODB_URI: mongodb://${MONGO_USER:-admin}:${MONGO_PASSWORD:-password}@mongodb:27017/${MONGO_DB:-ellty}?authSource=admin
-      NODE_ENV: ${NODE_ENV:-production}
+      NODE_ENV: ${NODE_ENV:-development}
+    depends_on:
+      - mongodb
+    volumes:
+      - .:/app
+      - /app/node_modules
     networks:
       - ellty_network
     restart: always
